@@ -22,7 +22,7 @@ const createTask=async (req,res)=>{
 const getTask=async(req,res)=>{
     try{
         let nam=req.body.name;
-        const gtask=await tasks.fineOne(nam);
+        const gtask=await tasks.findOne({name:nam});
         console.log(nam);
         console.log(gtask)
         res.status(200).json({msg:gtask})
