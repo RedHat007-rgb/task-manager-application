@@ -1,13 +1,19 @@
 const express=require("express")
+const tasks=require("../models/tasks")
 
-
-function getAllTasks(req,res){
-    res.send("hi there")
+const getAllTasks=(req,res)=>{
+    res.send("fetched all tasks")
 }
 
-const createTask=(req,res)=>{
-    res.send("Uour task is created")
+const createTask=async (req,res)=>{
+    const task1=await tasks.create(req.body)
+    res.status(201).json({task1});
+
 }
+    
+
+    
+
 
 const deleteTask=(req,res)=>{
     res.send("your task is deleyed successfully")
