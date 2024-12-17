@@ -1,8 +1,13 @@
 const express=require("express")
 const tasks=require("../models/tasks")
 
-const getAllTasks=(req,res)=>{
-    res.send("fetched all tasks")
+const getAllTasks=async(req,res)=>{
+    try{
+        const task=await tasks.find({});
+        res.status(200).json({task});
+    }catch(error){
+       res.status(500).json({error}) 
+    }
 }
 
 const createTask=async (req,res)=>{
@@ -14,10 +19,18 @@ const createTask=async (req,res)=>{
     }
 
 }
+const getTask=async(req,res)=>{
+    try{
+        let nam=req.body.name;
+        const gtask=await tasks.fineOne(nam);
+        console.log(nam);
+        console.log(gtask)
+        res.status(200).json({msg:gtask})
+    }catch{
+        res.status(404).json({msg:"give task cannot be found"}) 
+    }
+}
     
-
-    
-
 
 const deleteTask=(req,res)=>{
     res.send("your task is deleyed successfully")
@@ -27,9 +40,7 @@ const updateTask=(req,res)=>{
     res.send("Your post has been updated sucessfully")
 }
 
-const getTask=(req,res)=>{
-    res.send(" task is  fetched.")
-}
+
 
 module.exports={
     getAllTasks,getTask,createTask,updateTask,deleteTask
