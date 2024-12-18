@@ -1,14 +1,15 @@
-const express=require("express")
 const tasks=require("../models/tasks")
 
-const getAllTasks=async(req,res)=>{
+const async=require("../middleware/async");
+
+const getAllTasks= asyncWrapper(async(req,res)=>{
     try{
         const task=await tasks.find({});
         res.status(200).json({task});
     }catch(error){
        res.status(500).json({error}) 
     }
-}
+})
 
 const createTask=async (req,res)=>{
     try{
@@ -21,23 +22,47 @@ const createTask=async (req,res)=>{
 }
 const getTask=async(req,res)=>{
     try{
-        let nam=req.body.name;
-        const gtask=await tasks.findOne({name:nam});
-        console.log(nam);
-        console.log(gtask)
-        res.status(200).json({msg:gtask})
-    }catch{
-        res.status(404).json({msg:"give task cannot be found"}) 
+       let { id:taskId }=req.params;
+       const p=await tasks.findOne({_id:taskId})
+       if(!p){
+        res.status(400).json({msg:`task not found with id: ${taskId}`})
+       }
+       res.status(200).json({msg:p})
+       }
+       catch(error){
+        res.status(500).json({msg:error})
+       }
     }
-}
+
     
 
-const deleteTask=(req,res)=>{
-    res.send("your task is deleyed successfully")
+const deleteTask=async (req,res)=>{
+    try{
+        const {id:taskId}=req.params;
+        const dtask=await tasks.findOneAndDelete({_id:taskId});
+        if(!dtask){
+            res.status(400).json({msg:`SooryBro,We cannot find yor task with id:${taskId}`})
+        }
+        res.status(200).json({dtask})
+    }
+    catch(e){
+        res.status(500).json({msg:error})
+    }
 }
 
-const updateTask=(req,res)=>{
-    res.send("Your post has been updated sucessfully")
+const updateTask=async (req,res)=>{
+    try{
+        const {id:taskId} =req.params;
+        const utask=await tasks.findOneAndUpdate({_id:taskId},req.body,{
+            new:true,runValidators:true
+        })
+        if(!utask){
+            res.send(400).json(`Task is not present with id:${taskId}`)
+        }
+        res.status(200).json({utask})
+    } catch(error){
+        res.status(500).json({msg:error})
+    }  
 }
 
 
@@ -45,5 +70,3 @@ const updateTask=(req,res)=>{
 module.exports={
     getAllTasks,getTask,createTask,updateTask,deleteTask
 }
-
-//post,get(single),patch(single),delete
